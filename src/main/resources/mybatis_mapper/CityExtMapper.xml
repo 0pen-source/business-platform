@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.weibao.mapper.CityExtMapper" >
+<resultMap id="BaseResultMap" type="com.github.weibao.model.ext.CityExt" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="provincecode" property="provincecode" jdbcType="VARCHAR" />
+    <collection property="countyList" ofType="com.github.weibao.model.County" column="id">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="citycode" property="citycode" jdbcType="VARCHAR" />
+    </collection>
+</resultMap>
+
+<select id="selectExt" parameterType="int" resultMap="BaseResultMap">
+    select ci.name,co.name from county co left join city ci on ci.code=co.citycode where ci.id=2
+</select>
+
+</mapper>

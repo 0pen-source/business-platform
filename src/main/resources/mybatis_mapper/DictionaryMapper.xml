@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.weibao.mapper.DictionaryMapper">
+  <resultMap id="BaseResultMap" type="com.github.weibao.model.Dictionary">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="code" jdbcType="INTEGER" property="code" />
+    <id column="value" jdbcType="VARCHAR" property="value" />
+    <result column="intro" jdbcType="VARCHAR" property="intro" />
+  </resultMap>
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.weibao.mapper.AgencyCompnayExtMapper" >
+
+
+    <resultMap type="com.github.weibao.model.ext.AgencyCompanyExt" id="companyItemsStaffsResultMap">
+        <!-- 公司信息 -->
+        <id column="company_Id" property="companyId" jdbcType="INTEGER" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="county" property="county" jdbcType="VARCHAR" />
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+        <result column="company_type" property="companyType" jdbcType="CHAR" />
+        <result column="company_scale" property="companyScale" jdbcType="INTEGER" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="law_person" property="lawPerson" jdbcType="VARCHAR" />
+        <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+        <result column="url" property="url" jdbcType="VARCHAR" />
+        <result column="intro" property="intro" jdbcType="VARCHAR" />
+        <result column="account_Id" property="accountId" jdbcType="INTEGER" />
+        <result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
+
+        <collection property="itemList" ofType="com.github.weibao.model.ext.AgencyItemsExt2">
+            <id column="item_Id" property="itemId" jdbcType="INTEGER" />
+            <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+            <result column="item_type" property="itemType" jdbcType="INTEGER" />
+            <result column="cost" property="cost" jdbcType="DECIMAL" />
+            <result column="max_cost" property="maxCost" jdbcType="DECIMAL" />
+            <result column="min_cost" property="minCost" jdbcType="DECIMAL" />
+            <result column="intro" property="intro" jdbcType="VARCHAR" />
+            <!--<result column="company_Id" property="companyId" jdbcType="INTEGER" />-->
+            <result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
+        </collection>
+
+        <collection property="staffsList" ofType="com.github.weibao.model.ext.AgencyStaffsExt">
+            <id column="staff_Id" property="staffId" jdbcType="INTEGER" />
+            <result column="name" property="name" jdbcType="VARCHAR" />
+            <result column="gender" property="gender" jdbcType="VARCHAR" />
+            <result column="post" property="post" jdbcType="VARCHAR" />
+            <result column="qq" property="qq" jdbcType="VARCHAR" />
+            <result column="phone" property="phone" jdbcType="INTEGER" />
+            <result column="email" property="email" jdbcType="VARCHAR" />
+            <result column="account_Id" property="accountId" jdbcType="INTEGER" />
+            <result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
+        </collection>
+    </resultMap>
+    <!--人员与服务关联-->
+    <!--<resultMap id="staffsItemsRelevance" type="com.github.weibao.model.AgencyItemsHasStaffs">-->
+    <!--</resultMap>-->
+
+    <select id="selectAllCompany" parameterType="int" resultMap="companyItemsStaffsResultMap">
+        SELECT c.company_Id,c.company_name,c.address,i.item_Id,i.item_name,i.item_Id,i.cost,i.max_cost,i.min_cost,i.intro,s.name,s.staff_Id,s.phone,s.qq,s.email,s.weichat FROM agency_company c
+        LEFT JOIN agency_items i ON c.company_Id = i.company_Id
+        LEFT JOIN agency_company_has_staffs acs ON acs.company_Id = c.company_Id
+        LEFT JOIN agency_staffs s ON acs.staff_Id = s.staff_Id and s.is_deleted!=1
+        WHERE c.account_Id = #{accountId}
+--         select c.company_Id,i.item_name from agency_company c
+--         left join agency_items i on c.company_Id = i.company_Id
+--         where c.account_Id = 2
+    </select>
+    <insert id="insertStaffsItemsRelevance" parameterType="AgencyCompanyHasStaffs">
+        INSERT INTO agency_company_has_staffs (company_Id,staff_Id) VALUES (#{companyId},#{staffId})
+    </insert>
+
+
+    <delete id="deleteStasffAndCompanyLink" parameterType="AgencyCompanyHasStaffs">
+        DELETE FROM agency_company_has_staffs WHERE company_Id =#{companyId} and staff_Id = #{staffId}
+    </delete>
+
+</mapper>

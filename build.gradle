@@ -1,0 +1,177 @@
+version '1.0'
+
+
+
+apply plugin: 'war'
+apply plugin: 'idea'
+//apply plugin: 'eclipse-wtp'
+
+apply plugin: 'org.akhikhl.gretty'
+apply plugin: 'org.flywaydb.flyway'
+
+//指定gradle wrapper版本
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+
+
+configurations {
+    driver
+
+    mybatisGenerator
+
+}
+
+//配置插件仓库
+buildscript {
+
+    repositories {
+        //maven{ url 'https://oss.sonatype.org/content/repositories/' }
+        mavenCentral()
+
+    }
+
+    dependencies {
+
+        classpath 'org.akhikhl.gretty:gretty:1.2.4'
+        classpath: 'mysql:mysql-connector-java:5.1.36'
+        classpath "org.flywaydb:flyway-gradle-plugin:3.2.1"
+    }
+
+
+}
+
+//gretty设置
+gretty {
+    port = 8080
+    contextPath = "/"
+}
+
+
+ext {
+
+    def prop = new Properties();
+    file("src/main/resources/jdbc-mysql.properties").withInputStream {
+        prop.load(it)
+    }
+    prop.each {
+        project.extensions.add("$it.key", it.value);
+
+    }
+}
+
+
+flyway {
+    user = project['jdbc.user']
+    url = project['jdbc.url']
+    password = project['jdbc.pass']
+    locations = ["filesystem:db/migration"]
+}
+
+repositories {
+    mavenCentral()
+}
+
+//统一编码为utf-8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+//依赖
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.springframework:spring-test:4.2.0.RELEASE'
+    testCompile 'org.hamcrest:hamcrest-core:1.3'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+
+//    providedCompile "javax.servlet:javax.servlet-api:3.1.0"
+//    providedCompile "javax.servlet.jsp:jsp-api:2.2.1-b03"
+//    providedCompile "javax.servlet.jsp.jstl:javax.servlet.jsp.jstl-api:1.2.1"
+
+    //maven仓库中心没有的jar，则放入libs目录下
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'org.springframework:spring-webmvc:4.2.0.RELEASE'
+    compile 'org.springframework:spring-orm:4.2.0.RELEASE'
+    compile 'org.springframework:spring-context-support:4.2.0.RELEASE'
+    compile 'mysql:mysql-connector-java:5.1.36'
+    compile 'org.mybatis:mybatis:3.3.0'
+    compile 'org.mybatis:mybatis-spring:1.2.3'
+    compile 'com.github.pagehelper:pagehelper:4.0.0'
+    compile 'org.apache.shiro:shiro-spring:1.2.4'
+    compile 'org.apache.tomcat:tomcat-jdbc:8.0.24'
+    compile 'javax.mail:mail:1.4.7'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.1'
+    compile 'org.aspectj:aspectjweaver:1.8.6'
+    compile 'commons-fileupload:commons-fileupload:1.3.1'
+    compile 'org.slf4j:slf4j-log4j12:1.7.12'
+    compile 'tk.mybatis:mapper:3.3.4'
+    compile 'com.google.code.gson:gson:2.5'
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+
+    driver 'mysql:mysql-connector-java:5.1.36'
+
+    mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.3.2'
+    mybatisGenerator 'mysql:mysql-connector-java:5.1.36'
+    mybatisGenerator 'tk.mybatis:mapper:3.3.4'
+
+}
+
+import groovy.sql.Sql;
+
+task initDB << {
+    description = 'get file text from db/backup.sql and import to mysql'
+
+    URLClassLoader loader = GroovyObject.class.classLoader
+    configurations.driver.each { File file ->
+        loader.addURL(file.toURL())
+    }
+
+    def props = [user: project['jdbc.user'], password: project['jdbc.pass'], allowMultiQueries: 'true'] as Properties
+    def url = project['jdbc.url']
+    def driver = project['jdbc.driverClassName']
+
+    Sql sql = Sql.newInstance(url, props, driver)
+    def text = file("db/backup.sql").text
+    sql.execute(text)
+}
+
+
+task mybatisGenerate << {
+    description = '使用MyBatis Generator生成model,dao,mapper'
+
+    ant.properties['targetProject'] = projectDir.path
+    ant.properties['driverClass'] = project['jdbc.driverClassName']
+    ant.properties['connectionURL'] = project['jdbc.url']
+    ant.properties['userId'] = project['jdbc.user']
+    ant.properties['password'] = project['jdbc.pass']
+    ant.properties['src_main_java'] = sourceSets.main.java.srcDirs[0].path
+    ant.properties['src_main_resources'] = sourceSets.main.resources.srcDirs[0].path
+    ant.properties['modelPackage'] = this.modelPackage
+    ant.properties['mapperPackage'] = this.mapperPackage
+    ant.properties['sqlMapperPackage'] = this.sqlMapperPackage
+
+    ant.taskdef(
+            name: 'mbgenerator',
+            classname: 'org.mybatis.generator.ant.GeneratorAntTask',
+            classpath: configurations.mybatisGenerator.asPath
+    )
+    ant.mbgenerator(overwrite: true,
+            configfile: 'db/generatorConfig.xml', verbose: true) {
+        propertyset {
+            propertyref(name: 'targetProject')
+            propertyref(name: 'userId')
+            propertyref(name: 'driverClass')
+            propertyref(name: 'connectionURL')
+            propertyref(name: 'password')
+            propertyref(name: 'src_main_java')
+            propertyref(name: 'src_main_resources')
+            propertyref(name: 'modelPackage')
+            propertyref(name: 'mapperPackage')
+            propertyref(name: 'sqlMapperPackage')
+
+        }
+    }
+}
+
+
+
+

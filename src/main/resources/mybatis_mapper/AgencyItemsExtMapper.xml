@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.github.weibao.mapper.AgencyItemsExtMapper">
+    <resultMap id="BaseResultMap" type="com.github.weibao.model.ext.AgencyItemsExt">
+        <result column="aa" property="companyName" jdbcType="VARCHAR"/>
+        <result column="bb" property="itemName" jdbcType="VARCHAR"/>
+        <result column="ff" property="nameAndPhone" jdbcType="VARCHAR"/>
+        <result column="intro" property="intro" jdbcType="VARCHAR"/>
+        <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="county" property="county" jdbcType="VARCHAR"/>
+        <result column="cost" property="cost" jdbcType="DOUBLE"/>
+        <result column="company_scale" property="companyScale" jdbcType="INTEGER"/>
+        <result column="item_Id" property="itemId" jdbcType="INTEGER"/>
+
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select a.company_name as aa,
+               b.item_name as bb,
+               b.item_Id AS bid,
+               c.staff_Id as cc,
+               group_concat(d.name,":",d.phone ) as ff,
+               telephone,
+               address,
+               cost,
+               b.item_Id,
+               b.intro as intro,
+               company_scale,
+               province.name as province,
+               city.name as city,
+               county.name as county
+        from agency_items b
+        left join agency_company a ON a.company_Id = b.company_Id
+        left join agency_items_has_staffs c on c.item_Id = b.item_Id
+        left join agency_staffs d on d.staff_Id = c.staff_Id
+	    left join province on a.province=province.code
+        left join city on a.city=city.code
+        left join county on  a.county=county.code
+        where a.province=#{0}
+            and (city.name like #{2} OR county.name like #{2})
+            and (a.company_name like  #{1} OR b.item_name like #{1})
+        group by aa,bb limit #{3},#{4};
+
+    </select>
+    <select id="selectCollect" resultMap="BaseResultMap">
+        select ci.items_id,ci.user_id,
+            a.company_name as aa,b.item_name as bb,
+            b.item_Id AS bid,c.staff_Id as cc,
+            group_concat(d.name,":",d.phone ) as ff,
+            telephone,address,cost,
+            b.item_Id,company_scale,
+            province.name as province,
+            city.name as city,
+            county.name as county
+        from collect_items ci
+        left join agency_items b  on ci.items_id=b.item_Id
+	    left join agency_company a ON a.company_Id = b.company_Id
+        left join agency_items_has_staffs c on c.item_Id = b.item_Id
+        left join agency_staffs d on d.staff_Id = c.staff_Id
+	    left join province on a.province=province.code
+        left join city on a.city=city.code
+        left join county on  a.county=county.code
+        where user_id=#{0}
+        group by aa,bb;
+            </select>
+
+    <select id="selectPage" resultType="INTEGER">
+        select  count(b.item_Id ) as page
+        from agency_items b
+        left join agency_company a ON a.company_Id = b.company_Id
+	    left join province on a.province=province.code
+        left join city on a.city=city.code
+        left join county on  a.county=county.code
+        where a.province=#{0}
+          and (city.name like #{2} OR county.name like #{2})
+          and (a.company_name like  #{1} OR b.item_name like #{1})
+
+        -- select company_name,item_name,group_concat(dd,":",ee ) from agency_company a left join agency_items b ON a.company_Id = b.company_Id
+        --  left join agency_items_has_agency_staffs c on c.agency_items_item_Id = b.item_Id
+        --   left join agency_staffs d on d.staff_Id = c.agency_staffs_staff_Id;
+        --
+        --        select aa,bb,group_concat(dd,":",ee ) as ff,telephone,province,city,address,cost,item_Id,company_scale from
+        --       (select a.company_name as aa,b.item_name as bb,b.item_Id AS bid,c.agency_staffs_staff_Id as cc,d.name as dd,d.phone as ee
+        --       from agency_items b left join agency_company a
+        --       ON a.company_Id = b.company_Id
+        --       left join agency_items_has_agency_staffs c on c.agency_items_item_Id = b.item_Id
+        --       left join agency_staffs d on d.staff_Id = c.agency_staffs_staff_Id  ) newtable
+        --       group by aa,bid;
+    </select>
+
+    <insert id="insertItemStaffLink" parameterType="ItemStaffLink">
+        INSERT INTO agency_items_has_staffs (item_Id,staff_Id) VALUES (#{itemId},#{staffId})
+    </insert>
+
+</mapper>

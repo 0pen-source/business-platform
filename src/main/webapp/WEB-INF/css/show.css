@@ -1,0 +1,244 @@
+*{
+	padding: 0px;
+	margin: 0px;
+	font-family: "Microsoft YaHei";
+}
+body, html {
+	min-height:101%;
+}
+#main{
+	/*border: 1px solid red;*/
+}
+
+#container
+{
+   margin: auto;
+   width: 70%;
+   margin-top: 5px;
+}
+#header
+{
+
+	height:52px;
+}
+#header li
+{
+	color:#959595;
+	list-style:none;
+	float:left;
+	margin-right:20px;
+	font-size:12px;
+}
+#header li a
+{
+	color: rgb(0, 160, 233);
+	text-decoration:none;
+	padding:10px;
+}
+
+#header ul
+{
+	float:right;
+	margin-top:-30px;
+}
+#header li a:hover
+{
+
+	background-color: rgb(0, 160, 233);
+	/*css3  圆角特效*/
+	border-radius: 25px;
+	color: white;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+}
+#logo
+{
+	 float: left;
+	 margin-left: 23%;
+}
+
+#search-sousuo
+{	/*border:1px solid red;*/
+	margin: auto;
+	 width: 60%;
+	height: 80px;
+}
+#search
+{
+	float: left;
+	margin: auto;
+	margin-top: 9px;
+	border-width: 1px;
+    border-color: rgb(0, 160, 233);
+    border-style: solid;
+	width: 50%;
+    height: 40px;
+    border-left: 1px;
+}
+#submit-search
+{
+	margin-top: 9px;
+	float: left;
+  font-size: 18px;
+  color: rgb(255, 255, 255);
+  border-width: 1px;
+  border-color: rgb(0, 160, 233);
+  border-style: solid;
+  background-color: rgb(0, 160, 233);
+  width: 80px;
+  height: 40px;
+}
+select{
+	 float: left;
+	 margin-top: 9px;
+	 margin-left:120px ;
+    -moz-appearance: none;
+    -webkit-appearance:none;
+    appearance:none;
+     border-color: rgb(0, 160, 233);
+     color: rgb(0, 160, 233);
+     width: 90px;
+     height: 40px;
+     background-image: url(../images/down.png);
+     background-repeat: no-repeat;
+     background-position: 70px 15px;
+     border-right: 1px;
+}
+select:focus
+{
+	 background-image: url(../images/arrow.png);
+     background-repeat: no-repeat;
+     background-position: 70px 15px;
+}
+select option:focus{
+	background-image: url(../images/down.png);
+     background-repeat: no-repeat;
+     background-position: 70px 15px;
+}
+
+.address{
+	width: 60%;
+	//height:100%;
+	margin: auto;
+	padding-bottom: 60px;
+}
+.title{
+	width:85px;
+	float: left;
+	font-size: 20px;
+	color: rgb(0, 160, 233);
+	margin-left: 20px;
+}
+.showaddress{
+	width: 85%;
+	float: left;
+	//height: 100%;
+
+}
+.showaddress li{
+	list-style:none;
+	float: left;
+	margin-top: 4px;
+	margin-left: 10px;
+}
+.showaddress  li a{
+	color: rgb(160, 160, 160);
+	text-decoration:none;
+}
+.showaddress li a:hover{
+	color: rgb(0, 160, 233);
+}
+
+.showinfo{
+	width: 60%;
+	height:100%;
+	margin: auto;
+	margin-top: 10px;
+
+}
+.showinfo table{
+	border-collapse:collapse;
+	width:100%;
+}
+.showinfo .trth{
+
+	height: 35px;
+	border-bottom: 1px solid rgb(160, 160, 160);
+	border-top: 1px solid rgb(160, 160, 160);
+}
+.showinfo tr{
+	height: 35px;
+}
+.showinfo .toptr:hover{
+	background-color: rgb(135,206,250);
+}
+.showinfo th{
+	text-align:center;
+	color:rgb(0, 160, 233); ;
+}
+.showinfo td{
+	text-align:center;
+}
+.tdmoney{
+	color: red;
+}
+.tda{
+	color: rgb(0, 160, 233);
+	text-decoration: none;
+}
+
+.trselect{
+	width:100%;
+	height: 100%;
+}
+.tdtable{
+	font-size: 13px;
+	width: 100%;
+
+}
+.tdtable tr{
+	height: 100%;
+	width: 100%;
+}
+.tdtable tr td{
+	padding-bottom: 5px;
+}
+.tdtable .td1{
+
+	width:100px;
+	/*text-align: ;*/
+	/*border: 1px solid red;*/
+}
+.tdtable .td2{
+	text-align: left;
+	/*border: 1px solid red;*/
+	width: 500px;
+
+}
+.tdtable .td2 li{
+	list-style:none;
+	float: left;
+	margin-left: 10px;
+}
+
+#footer
+{
+	background-color: rgb(238, 238, 238);
+	border: 1px solid rgb(238, 238, 238);
+	height:90px;
+	margin-top: 10px;
+}
+#footcontainer{
+	margin: auto;
+   width: 70%;
+   height: 70px;
+   margin-top: 10px;
+}
+#footer-text
+{
+  font-size: 12px;
+  font-family: "Microsoft YaHei";
+  color: rgb(160, 160, 160);
+  line-height: 1.667;
+  text-align: center;
+}
